@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Date Format</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .info {
+            color: #17a2b8;
+            font-weight: bold;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            min-height: 100px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تحديث تنسيق التاريخ</h1>
+        <p>هذه الأداة ستقوم بتغيير تنسيق التاريخ من "September 3, 2025" إلى "03/09/2025" في البيانات المخزنة محلياً.</p>
+        
+        <button onclick="updateDateFormat()">تحديث تنسيق التاريخ</button>
+        <button onclick="checkData()">فحص البيانات</button>
+        <button onclick="clearOutput()">مسح النتائج</button>
+        
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            output.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '';
+        }
+
+        function checkData() {
+            log('فحص البيانات المخزنة محلياً...', 'info');
+            let foundCount = 0;
+            
+            Object.keys(localStorage).forEach(key => {
+                try {
+                    const value = localStorage.getItem(key);
+                    if (value && value.includes('September 3, 2025')) {
+                        foundCount++;
+                        log(`وُجد التاريخ في المفتاح: ${key}`, 'info');
+                    }
+                } catch (e) {
+                    log(`خطأ في فحص المفتاح ${key}: ${e.message}`, 'error');
+                }
+            });
+            
+            if (foundCount === 0) {
+                log('لم يتم العثور على التاريخ "September 3, 2025" في البيانات المخزنة', 'info');
+            } else {
+                log(`تم العثور على التاريخ في ${foundCount} موقع`, 'success');
+            }
+        }
+
+        function updateDateFormat() {
+            log('بدء تحديث تنسيق التاريخ...', 'info');
+            let updatedCount = 0;
+            
+            Object.keys(localStorage).forEach(key => {
+                try {
+                    const value = localStorage.getItem(key);
+                    if (value && value.includes('September 3, 2025')) {
+                        const updatedValue = value.replace(/September 3, 2025/g, '03/09/2025');
+                        localStorage.setItem(key, updatedValue);
+                        updatedCount++;
+                        log(`تم تحديث المفتاح: ${key}`, 'success');
+                    }
+                } catch (e) {
+                    log(`خطأ في تحديث المفتاح ${key}: ${e.message}`, 'error');
+                }
+            });
+            
+            if (updatedCount === 0) {
+                log('لم يتم العثور على أي بيانات تحتاج للتحديث', 'info');
+            } else {
+                log(`تم تحديث ${updatedCount} موقع بنجاح!`, 'success');
+                log('سيتم إعادة تحميل الصفحة خلال 3 ثوانٍ...', 'info');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            }
+        }
+
+        // تشغيل فحص البيانات عند تحميل الصفحة
+        window.onload = function() {
+            log('مرحباً! أداة تحديث تنسيق التاريخ جاهزة للاستخدام', 'success');
+            checkData();
+        };
+    </script>
+</body>
+</html>

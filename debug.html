@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Console</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #console { background: #000; color: #0f0; padding: 10px; height: 400px; overflow-y: scroll; }
+        .log { margin: 2px 0; }
+    </style>
+</head>
+<body>
+    <h1>Debug Console for Profit Calculation</h1>
+    <div id="console"></div>
+    <script>
+        // Override console.log to display in our div
+        const originalLog = console.log;
+        const consoleDiv = document.getElementById('console');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const logDiv = document.createElement('div');
+            logDiv.className = 'log';
+            logDiv.textContent = args.join(' ');
+            consoleDiv.appendChild(logDiv);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        };
+        
+        // Load the main app in an iframe to capture its logs
+        const iframe = document.createElement('iframe');
+        iframe.src = 'http://localhost:8081';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        
+        console.log('Debug console loaded. Monitoring profit calculations...');
+    </script>
+</body>
+</html>
